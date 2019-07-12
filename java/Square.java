@@ -3,7 +3,7 @@
 class Square {
 
 
-  private int val = -1;
+  private int val = 0;
   private int xcord;
   private int ycord;
   public Square (int val) {
@@ -18,12 +18,16 @@ class Square {
     return this.val;
   }
 
+  public void setVal (int val) {
+    this.val = val;
+  }
+
+  public String getCord () {
+    return this.xcord + " " + this.ycord;
+  }
+
   public String toString () {
-    if (val == -1) {
-      return "0";
-    } else {
-      return "|" + val + "|";
-    }
+    return val + "";
   }
 
 }
