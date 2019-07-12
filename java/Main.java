@@ -4,6 +4,8 @@ import java.util.Scanner;
 
 public class Main {
   public static void main (String args[]) {
+
+    // default size is 5, but can be changed for a bigger game
     int fieldSize = 5;
 
     ArrayList<ArrayList<Square>> fieldSquares = new ArrayList<>();
@@ -33,38 +35,32 @@ public class Main {
       if (line.equals("up")) {
         emptySquares = moveUp(fieldSquares, emptySquares);
         emptySquares = addRandom(fieldSquares, emptySquares);
-        System.out.println("empties: " + emptySquares);
         drawField(fieldSquares, fieldSize);
       }
       if (line.equals("down")) {
         emptySquares = moveDown(fieldSquares, emptySquares);
         emptySquares = addRandom(fieldSquares, emptySquares);
-        System.out.println("empties: " + emptySquares);
         drawField(fieldSquares, fieldSize);
 
       }
       if (line.equals("right")) {
         emptySquares = moveRight(fieldSquares, emptySquares);
         emptySquares = addRandom(fieldSquares, emptySquares);
-        System.out.println("empties: " + emptySquares);
         drawField(fieldSquares, fieldSize);
 
       }
       if (line.equals("left")) {
         emptySquares = moveLeft(fieldSquares, emptySquares);
         emptySquares = addRandom(fieldSquares, emptySquares);
-        System.out.println("empties: " + emptySquares);
         drawField(fieldSquares, fieldSize);
 
       }
       if (line.equals("reset")) {
         emptySquares = newField(fieldSquares, fieldSize);
         emptySquares = addRandom(fieldSquares, emptySquares);
-        System.out.println("empties: " + emptySquares);
         drawField(fieldSquares, fieldSize);
       }
     }
-
   }
 
   public static int moveUp (ArrayList<ArrayList<Square>> squares, int emptySquares) {
@@ -72,7 +68,6 @@ public class Main {
     for (int i = 0; i < squares.size(); i++) {
 
       for (int j = 0; j < squares.size(); j++) {
-        
 
         int val = squares.get(j).get(i).getVal();
 
@@ -97,11 +92,7 @@ public class Main {
             squares.get(newPos).get(i).setVal(val + oldVal);
             squares.get(j).get(i).setVal(0);
           }
-          
-
         }
-
-
       }
     }
     return emptySquares;
@@ -113,7 +104,6 @@ public class Main {
 
       for (int j = squares.size() - 1; j >= 0 ; j--) {
         
-
         int val = squares.get(j).get(i).getVal();
 
         if (val > 0) {
@@ -137,15 +127,10 @@ public class Main {
             squares.get(newPos).get(i).setVal(val + oldVal);
             squares.get(j).get(i).setVal(0);
           }
-          
-
         }
-
-
       }
     }
     return emptySquares;
-
   }
 
   public static int moveRight (ArrayList<ArrayList<Square>> squares, int emptySquares) {
@@ -154,7 +139,6 @@ public class Main {
 
       for (int j = squares.size() - 1; j >= 0 ; j--) {
         
-
         int val = squares.get(i).get(j).getVal();
 
         if (val > 0) {
@@ -178,11 +162,7 @@ public class Main {
             squares.get(i).get(newPos).setVal(val + oldVal);
             squares.get(i).get(j).setVal(0);
           }
-          
-
         }
-
-
       }
     }
     return emptySquares;
@@ -193,7 +173,6 @@ public class Main {
     for (int i = 0; i < squares.size(); i++) {
 
       for (int j = 0; j < squares.size(); j++) {
-        
 
         int val = squares.get(i).get(j).getVal();
 
@@ -218,11 +197,7 @@ public class Main {
             squares.get(i).get(newPos).setVal(val + oldVal);
             squares.get(i).get(j).setVal(0);
           }
-          
-
         }
-
-
       }
     }
     return emptySquares;
@@ -240,7 +215,7 @@ public class Main {
           count++;
         }
         if (count == position) {
-          current.setVal(random.nextInt(1) + 1);
+          current.setVal(2);
           return emptySquares - 1;
         }
       }
@@ -264,14 +239,22 @@ public class Main {
     for (int i = 1; i <= n+2; i++) {
       for (int j = 1; j <= n+2; j++) {
         if ( i == 1 || i == n+2 || j == 1 || j == n+2) {
-          output = output + "*";
+          output = output + " * ";
         } else {
-          output = output + squares.get(i - 2).get(j - 2).toString();
+          String val = squares.get(i - 2).get(j - 2).toString();
+          if (val.length() > 2) {
+            output = output + val;
+          } else if (val.length() > 1) {
+            output = output + " " + val;
+          } else {
+            output = output + " " + val + " ";
+        
+          }
         }
 
       }
       if (i != n+2) {
-        output = output + "\n";
+        output = output + "\n" + "\n";
       }
     }
 

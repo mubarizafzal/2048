@@ -2,13 +2,14 @@
 
 class Square {
 
-
   private int val = 0;
   private int xcord;
   private int ycord;
+  
   public Square (int val) {
     this.val = val;
   }
+
   public Square (int x, int y) {
     this.xcord = x;
     this.ycord = y;
