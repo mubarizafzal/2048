@@ -1,5 +1,3 @@
-
-
 class Square {
 
   private int val = 0;

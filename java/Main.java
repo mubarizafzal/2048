@@ -203,7 +203,6 @@ public class Main {
     return emptySquares;
   }
 
-
   public static int addRandom (ArrayList<ArrayList<Square>> squares, int emptySquares) {
 
     Random random = new Random();
@@ -237,7 +236,9 @@ public class Main {
   public static void drawField (ArrayList<ArrayList<Square>> squares, int n) {
     String output = "";
     for (int i = 1; i <= n+2; i++) {
+
       for (int j = 1; j <= n+2; j++) {
+        
         if ( i == 1 || i == n+2 || j == 1 || j == n+2) {
           output = output + " * ";
         } else {
@@ -248,16 +249,14 @@ public class Main {
             output = output + " " + val;
           } else {
             output = output + " " + val + " ";
-        
           }
         }
-
       }
       if (i != n+2) {
         output = output + "\n" + "\n";
       }
     }
-
     System.out.println(output);
   }
+
 }
