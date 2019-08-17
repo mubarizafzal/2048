@@ -1,69 +1,138 @@
+
+/**
+ * what exactly happens:
+ * - key is pressed
+ * - key press is detected
+ * - calls method that does calculation for that type of key
+ * - after field array changes (do we not want to use the array?)
+ * - redraw scene (use current strings as is)
+ * - keep wating for a key press
+ * 
+ */
+
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.Scanner;
 
-public class Main {
-  public static void main (String args[]) {
 
-    // TODO: Implement Java AWT (Abstract Window Toolkit)
-    
+import javax.swing.JPanel;
 
-    // default size is 5, but can be changed for a bigger game
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+
+public class Field extends JPanel implements Runnable {
+
+  private int fieldSize = 5;
+
+  private ArrayList<ArrayList<Square>> fieldSquares = new ArrayList<>();
+
+  private int emptySquares = newField(fieldSquares, fieldSize);
+
+  public Field () {
+
+    initField();
+  }
+
+  private void initField () {
+
+    /*
     int fieldSize = 5;
 
     ArrayList<ArrayList<Square>> fieldSquares = new ArrayList<>();
 
     int emptySquares = newField(fieldSquares, fieldSize);
+    */
+
+    addKeyListener(new KeyAdapter() {
+
+      @Override
+      public void keyPressed (KeyEvent e) {
+        super.keyPressed(e);
+
+        int key = e.getKeyCode();
+
+        if (key == KeyEvent.VK_UP) {
+
+          emptySquares = moveUp(fieldSquares, emptySquares);
+          
+
+        }
+        if (key == KeyEvent.VK_DOWN) {
+
+          emptySquares = moveDown(fieldSquares, emptySquares);
+
+        }
+        if (key == KeyEvent.VK_LEFT) {
+
+          emptySquares = moveLeft(fieldSquares, emptySquares);
+
+        }
+        if (key == KeyEvent.VK_RIGHT) {
+
+          emptySquares = moveRight(fieldSquares, emptySquares);
+
+        }
+
+        emptySquares = addRandom(fieldSquares, emptySquares);
+
+        //redraw
+        repaint();
+      }
+    });
+    setBackground(Color.BLACK);
+    // set Pref size?
+    setFocusable(true);
+
+    Thread t = new Thread(this);
+    t.start();
+  
+  }
+
+  @Override
+  public void run () {
     
+  }
+
+  @Override
+  public void paintComponent (Graphics g) {
+    super.paintComponent(g);
+
+    drawBoard(g);
     
-    drawField(fieldSquares, fieldSize);
+  }
 
-    System.out.println("Welcome to terminal 2048 made in Java. The size of the board is " + fieldSize + "x" + fieldSize +".");
-    System.out.println("To push the square up, type 'up'");
-    System.out.println("To push the square down, type 'down'");
-    System.out.println("To push the square right, type 'right'");
-    System.out.println("To push the square left, type 'left'");
-    System.out.println("To start a new game, type 'reset'");
-    System.out.println("To quit, type 'q'");
-    System.out.println("---------------------------");
+  public void drawBoard (Graphics g) {
 
-    Scanner in = new Scanner (System.in);
-    String line = "";
+    g.setColor(Color.WHITE);
+    g.drawString(drawField(fieldSquares, fieldSize), 0, 0);
     
-    emptySquares = addRandom(fieldSquares, emptySquares);
-    drawField(fieldSquares, fieldSize);
+  }
 
-    while (!line.equals("q")) {
-      line = in.nextLine();
-      if (line.equals("up")) {
-        emptySquares = moveUp(fieldSquares, emptySquares);
-        emptySquares = addRandom(fieldSquares, emptySquares);
-        drawField(fieldSquares, fieldSize);
-      }
-      if (line.equals("down")) {
-        emptySquares = moveDown(fieldSquares, emptySquares);
-        emptySquares = addRandom(fieldSquares, emptySquares);
-        drawField(fieldSquares, fieldSize);
+  public static String drawField (ArrayList<ArrayList<Square>> squares, int n) {
+    String output = "";
+    for (int i = 1; i <= n+2; i++) {
 
+      for (int j = 1; j <= n+2; j++) {
+        
+        if ( i == 1 || i == n+2 || j == 1 || j == n+2) {
+          output = output + " * ";
+        } else {
+          String val = squares.get(i - 2).get(j - 2).toString();
+          if (val.length() > 2) {
+            output = output + val;
+          } else if (val.length() > 1) {
+            output = output + " " + val;
+          } else {
+            output = output + " " + val + " ";
+          }
+        }
       }
-      if (line.equals("right")) {
-        emptySquares = moveRight(fieldSquares, emptySquares);
-        emptySquares = addRandom(fieldSquares, emptySquares);
-        drawField(fieldSquares, fieldSize);
-
-      }
-      if (line.equals("left")) {
-        emptySquares = moveLeft(fieldSquares, emptySquares);
-        emptySquares = addRandom(fieldSquares, emptySquares);
-        drawField(fieldSquares, fieldSize);
-
-      }
-      if (line.equals("reset")) {
-        emptySquares = newField(fieldSquares, fieldSize);
-        emptySquares = addRandom(fieldSquares, emptySquares);
-        drawField(fieldSquares, fieldSize);
+      if (i != n+2) {
+        output = output + "\n" + "\n";
       }
     }
+    return output;
   }
 
   public static int moveUp (ArrayList<ArrayList<Square>> squares, int emptySquares) {
@@ -234,32 +303,6 @@ public class Main {
       }
     }
     return n*n;
-  }
-
-  public static void drawField (ArrayList<ArrayList<Square>> squares, int n) {
-    String output = "";
-    for (int i = 1; i <= n+2; i++) {
-
-      for (int j = 1; j <= n+2; j++) {
-        
-        if ( i == 1 || i == n+2 || j == 1 || j == n+2) {
-          output = output + " * ";
-        } else {
-          String val = squares.get(i - 2).get(j - 2).toString();
-          if (val.length() > 2) {
-            output = output + val;
-          } else if (val.length() > 1) {
-            output = output + " " + val;
-          } else {
-            output = output + " " + val + " ";
-          }
-        }
-      }
-      if (i != n+2) {
-        output = output + "\n" + "\n";
-      }
-    }
-    System.out.println(output);
   }
 
 }
