@@ -1,13 +1,13 @@
-
-
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.util.Random;
 import java.util.ArrayList;
-
 import javax.swing.JPanel;
 
 public class Board extends JPanel {
+
+  boolean canDraw = true;
 
   int fieldSize = 5;
 
@@ -15,26 +15,27 @@ public class Board extends JPanel {
 
   int emptySquares = newField(fieldSquares, fieldSize);
   
-  //emptySquares = addRandom(fieldSquares, emptySquares);
-
-  
-  ArrayList<String> field = drawField(fieldSquares, fieldSize);
-
-
-
 
   public Board () {
-
-    
-    setBackground(Color.RED);
     emptySquares = addRandom(fieldSquares, emptySquares);
-
 
   }
 
-  public void step (int n) {
 
-        
+  public int getFieldSize () {
+    return fieldSize;
+  }
+
+  public boolean allowed () {
+    return canDraw;
+  }
+
+  public void setAllow (boolean val) {
+
+    canDraw = val;
+  }
+
+  public void step (int n) {
 
     if (n == 38) {
 
@@ -59,58 +60,61 @@ public class Board extends JPanel {
 
   }
 
-
-
-
-
   @Override
   public void paintComponent (Graphics g) {
     super.paintComponent(g);
 
-
+    g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 20));
     
     setBackground(Color.WHITE);
 
-    field = drawField(fieldSquares, fieldSize);
-
-    for (int i = 0; i < field.size(); i++) {
-      g.drawString(field.get(i), 10, i*10 + 10);
-    }
-
-
+    draw(g,fieldSquares, fieldSize);
+    
   }
 
-  public ArrayList<String> drawField (ArrayList<ArrayList<Square>> squares, int n) {
-    String output = "";
+  public void draw (Graphics g, ArrayList<ArrayList<Square>> squares, int n) {
 
-    ArrayList<String> lines = new ArrayList<String>();
+    for (int i = 0; i < n; i++) {
 
-    for (int i = 1; i <= n+2; i++) {
+      for (int j = 0; j < n; j++) {
 
-      for (int j = 1; j <= n+2; j++) {
+        int val = squares.get(i).get(j).getVal();
+        int x = squares.get(i).get(j).getXCord();
+        int y = squares.get(i).get(j).getYCord();
+        x = (x*50) + x*10;
+        y = (y*50) + y*10;
+
+        if (val != 0) {        
+          float scale = (float)(Math.log(val) / Math.log(2));
+
+          float mult1 = 1 - ((scale*4)/100);
+
+          float mult2 = ((scale*9)/100);
         
-        if ( i == 1 || i == n+2 || j == 1 || j == n+2) {
-          output = output + " * ";
-        } else {
-          String val = squares.get(i - 2).get(j - 2).toString();
-          if (val.length() > 2) {
-            output = output + val;
-          } else if (val.length() > 1) {
-            output = output + " " + val;
-          } else {
-            output = output + " " + val + " ";
-          }
-        }
-      }
-      if (i != n+2) {
+          g.setColor(Color.getHSBColor(0.531f - mult2, 0.54f, 0.73f*mult1));
+          g.fillRoundRect(x, y, 50, 50, 20, 15);
 
-        lines.add(output);
-        output = "";
-        //output = output + "\n" + "\n";
+          String tempVal = Integer.toString(val);
+          int shift = tempVal.length();
+          shift = shift*6;
+
+          g.setColor(Color.WHITE);
+          g.drawString(tempVal, x + 25 - shift, y + 30);
+
+          
+
+        } else {
+
+          g.setColor(Color.GRAY);
+          g.fillRoundRect(x, y, 50, 50, 20, 15);
+
+        }
+
+        
+        
+        
       }
     }
-    lines.add(output);
-    return lines;
   }
 
   public int moveUp (ArrayList<ArrayList<Square>> squares, int emptySquares) {
@@ -254,6 +258,11 @@ public class Board extends JPanel {
   }
 
   public int addRandom (ArrayList<ArrayList<Square>> squares, int emptySquares) {
+
+
+    if (emptySquares == 0) {
+      return 0;
+    }
 
     Random random = new Random();
     int position = random.nextInt(emptySquares) + 1;

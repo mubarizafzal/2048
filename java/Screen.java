@@ -11,33 +11,40 @@ public class Screen extends JFrame {
     Board game = new Board();
     add(game);
 
-    // only take checks when not drawing
-
     addKeyListener(new KeyAdapter () {
+
       public void keyPressed (KeyEvent e) {
 
-        int key = e.getKeyCode();
+        if (game.allowed()) {
+          int key = e.getKeyCode();
         
-
-        if(key == KeyEvent.VK_UP || key == KeyEvent.VK_DOWN || key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_LEFT) {
-
-          game.step(key);
-          game.repaint();      
+          if(key == KeyEvent.VK_UP || key == KeyEvent.VK_DOWN || key == KeyEvent.VK_RIGHT || key == KeyEvent.VK_LEFT) {
+            game.step(key);
+            game.repaint();      
+          }
         }
 
+        game.setAllow(false);
+        
+      }
 
+      public void keyReleased (KeyEvent e) {
+        game.setAllow(true);
       }
     });
     
-    setSize(300,300);
+    int windowSize = game.getFieldSize()*50 + game.getFieldSize()*10;
+
+    setSize(windowSize,windowSize + 30);
     setVisible(true);
+    setResizable(false);
+    setFocusable(true);
+    setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
   }
 
   public static void main (String[] args) {
     new Screen();
   }
-
-
 
 }

@@ -21,12 +21,18 @@ class Square {
     this.val = val;
   }
 
-  public String getCord () {
-    return this.xcord + " " + this.ycord;
+  public int getXCord () {
+    return this.xcord;
   }
 
+  public int getYCord () {
+    return this.ycord;
+  }
+
+
+
   public String toString () {
-    return val + "";
+    return Integer.toString(val);
   }
 
 }
