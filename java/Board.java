@@ -1,116 +1,90 @@
 
-/**
- * what exactly happens:
- * - key is pressed
- * - key press is detected
- * - calls method that does calculation for that type of key
- * - after field array changes (do we not want to use the array?)
- * - redraw scene (use current strings as is)
- * - keep wating for a key press
- * 
- */
-
-import java.util.ArrayList;
-import java.util.Random;
-
-
-import javax.swing.JPanel;
 
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
+import java.util.Random;
+import java.util.ArrayList;
 
-public class Field extends JPanel implements Runnable {
+import javax.swing.JPanel;
 
-  private int fieldSize = 5;
+public class Board extends JPanel {
 
-  private ArrayList<ArrayList<Square>> fieldSquares = new ArrayList<>();
+  int fieldSize = 5;
 
-  private int emptySquares = newField(fieldSquares, fieldSize);
+  ArrayList<ArrayList<Square>> fieldSquares = new ArrayList<>();
 
-  public Field () {
-
-    initField();
-  }
-
-  private void initField () {
-
-    /*
-    int fieldSize = 5;
-
-    ArrayList<ArrayList<Square>> fieldSquares = new ArrayList<>();
-
-    int emptySquares = newField(fieldSquares, fieldSize);
-    */
-
-    addKeyListener(new KeyAdapter() {
-
-      @Override
-      public void keyPressed (KeyEvent e) {
-        super.keyPressed(e);
-
-        int key = e.getKeyCode();
-
-        if (key == KeyEvent.VK_UP) {
-
-          emptySquares = moveUp(fieldSquares, emptySquares);
-          
-
-        }
-        if (key == KeyEvent.VK_DOWN) {
-
-          emptySquares = moveDown(fieldSquares, emptySquares);
-
-        }
-        if (key == KeyEvent.VK_LEFT) {
-
-          emptySquares = moveLeft(fieldSquares, emptySquares);
-
-        }
-        if (key == KeyEvent.VK_RIGHT) {
-
-          emptySquares = moveRight(fieldSquares, emptySquares);
-
-        }
-
-        emptySquares = addRandom(fieldSquares, emptySquares);
-
-        //redraw
-        repaint();
-      }
-    });
-    setBackground(Color.BLACK);
-    // set Pref size?
-    setFocusable(true);
-
-    Thread t = new Thread(this);
-    t.start();
+  int emptySquares = newField(fieldSquares, fieldSize);
   
+  //emptySquares = addRandom(fieldSquares, emptySquares);
+
+  
+  ArrayList<String> field = drawField(fieldSquares, fieldSize);
+
+
+
+
+  public Board () {
+
+    
+    setBackground(Color.RED);
+    emptySquares = addRandom(fieldSquares, emptySquares);
+
+
   }
 
-  @Override
-  public void run () {
-    
+  public void step (int n) {
+
+        
+
+    if (n == 38) {
+
+      emptySquares = moveUp(fieldSquares, emptySquares);
+
+    } else if (n == 40) {
+
+      emptySquares = moveDown(fieldSquares, emptySquares);
+
+    } else if (n == 39) {
+
+      emptySquares = moveRight(fieldSquares, emptySquares);
+
+    } else if (n == 37) {
+
+      emptySquares = moveLeft(fieldSquares, emptySquares);
+
+    }
+
+    emptySquares = addRandom(fieldSquares, emptySquares);
+
+
   }
+
+
+
+
 
   @Override
   public void paintComponent (Graphics g) {
     super.paintComponent(g);
 
-    drawBoard(g);
+
     
+    setBackground(Color.WHITE);
+
+    field = drawField(fieldSquares, fieldSize);
+
+    for (int i = 0; i < field.size(); i++) {
+      g.drawString(field.get(i), 10, i*10 + 10);
+    }
+
+
   }
 
-  public void drawBoard (Graphics g) {
-
-    g.setColor(Color.WHITE);
-    g.drawString(drawField(fieldSquares, fieldSize), 0, 0);
-    
-  }
-
-  public static String drawField (ArrayList<ArrayList<Square>> squares, int n) {
+  public ArrayList<String> drawField (ArrayList<ArrayList<Square>> squares, int n) {
     String output = "";
+
+    ArrayList<String> lines = new ArrayList<String>();
+
     for (int i = 1; i <= n+2; i++) {
 
       for (int j = 1; j <= n+2; j++) {
@@ -129,13 +103,17 @@ public class Field extends JPanel implements Runnable {
         }
       }
       if (i != n+2) {
-        output = output + "\n" + "\n";
+
+        lines.add(output);
+        output = "";
+        //output = output + "\n" + "\n";
       }
     }
-    return output;
+    lines.add(output);
+    return lines;
   }
 
-  public static int moveUp (ArrayList<ArrayList<Square>> squares, int emptySquares) {
+  public int moveUp (ArrayList<ArrayList<Square>> squares, int emptySquares) {
     
     for (int i = 0; i < squares.size(); i++) {
 
@@ -170,7 +148,7 @@ public class Field extends JPanel implements Runnable {
     return emptySquares;
   }
 
-  public static int moveDown (ArrayList<ArrayList<Square>> squares, int emptySquares) {
+  public int moveDown (ArrayList<ArrayList<Square>> squares, int emptySquares) {
     
     for (int i = 0; i < squares.size(); i++) {
 
@@ -205,7 +183,7 @@ public class Field extends JPanel implements Runnable {
     return emptySquares;
   }
 
-  public static int moveRight (ArrayList<ArrayList<Square>> squares, int emptySquares) {
+  public int moveRight (ArrayList<ArrayList<Square>> squares, int emptySquares) {
     
     for (int i = 0; i < squares.size(); i++) {
 
@@ -240,7 +218,7 @@ public class Field extends JPanel implements Runnable {
     return emptySquares;
   }
 
-  public static int moveLeft (ArrayList<ArrayList<Square>> squares, int emptySquares) {
+  public int moveLeft (ArrayList<ArrayList<Square>> squares, int emptySquares) {
     
     for (int i = 0; i < squares.size(); i++) {
 
@@ -275,7 +253,7 @@ public class Field extends JPanel implements Runnable {
     return emptySquares;
   }
 
-  public static int addRandom (ArrayList<ArrayList<Square>> squares, int emptySquares) {
+  public int addRandom (ArrayList<ArrayList<Square>> squares, int emptySquares) {
 
     Random random = new Random();
     int position = random.nextInt(emptySquares) + 1;
@@ -294,7 +272,7 @@ public class Field extends JPanel implements Runnable {
     return emptySquares;
   }
 
-  public static int newField(ArrayList<ArrayList<Square>> squares, int n) {
+  public int newField(ArrayList<ArrayList<Square>> squares, int n) {
     squares.clear();
     for (int i = 0; i < n; i++){
       squares.add(new ArrayList<Square>());
@@ -304,5 +282,13 @@ public class Field extends JPanel implements Runnable {
     }
     return n*n;
   }
+
+
+
+
+
+
+  
+
 
 }
